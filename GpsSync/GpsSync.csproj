@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
+		<OutputType>Exe</OutputType>
+		<RootNamespace>GpsSync</RootNamespace>
+		<UseMaui>true</UseMaui>
+		<SingleProject>true</SingleProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<ApplicationTitle>GpsSync</ApplicationTitle>
+		<ApplicationId>org.shiny.locationsync</ApplicationId>
+		<ApplicationIdGuid>C89292D7-1390-4A1D-8B14-AE84B120B909</ApplicationIdGuid>
+
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<ApplicationVersion>1</ApplicationVersion>
+		
+		<ShinyVersion>3.0.0-beta-0241</ShinyVersion>
+		<UseInterpreter Condition="'$(Configuration)' == 'Debug'">True</UseInterpreter>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		<DefineConstants>$(DefineConstants);PLATFORM</DefineConstants>
+		<SupportedOSPlatformVersion>26.0</SupportedOSPlatformVersion>
+    </PropertyGroup>
+	
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+		<SupportedOSPlatformVersion>14.2</SupportedOSPlatformVersion>
+		<DefineConstants>$(DefineConstants);APPLE;PLATFORM</DefineConstants>
+	</PropertyGroup>
+	
+	<PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+		<SupportedOSPlatformVersion>14.0</SupportedOSPlatformVersion>
+		<DefineConstants>$(DefineConstants);APPLE;PLATFORM</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+
+		<MauiImage Include="Resources\Images\*" />
+		<MauiFont Include="Resources\Fonts\*" />
+		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(RuntimeIdentifier.Contains('iossimulator'))">
+		<CustomEntitlements Include="keychain-access-groups" Type="StringArray" Value="org.shiny.locationsync" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" Condition="'$(Configuration)' == 'Debug'" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="5.2.0" />
+		<PackageReference Include="Prism.DryIoc.Maui" Version="8.1.273-pre" />
+		<PackageReference Include="ReactiveUI.Fody" Version="19.4.1" />
+		<PackageReference Include="Shiny.Framework" Version="3.0.0-beta-0008" />
+		<PackageReference Include="Shiny.Logging.Sqlite" Version="$(ShinyVersion)" />
+		<PackageReference Include="Shiny.Locations" Version="$(ShinyVersion)" />
+		<PackageReference Include="Shiny.Notifications" Version="$(ShinyVersion)" />
+	</ItemGroup>
+
+</Project>
