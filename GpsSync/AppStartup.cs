@@ -27,6 +27,7 @@ public class AppStartup : IShinyStartupTask
 
     public void Start()
     {
+        // this is not needed WITH the job - but it is a good thought experiment
         this.conn
             .WhenInternetStatusChanged()
             .Skip(1) // skip initial ping

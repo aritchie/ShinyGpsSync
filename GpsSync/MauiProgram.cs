@@ -43,7 +43,11 @@ public static class MauiProgram
         s.AddShinyService<AppStartup>();
         s.AddShinyService<AppSettings>();
 
-        //s.AddJob(typeof(GpsSync.Delegates.MyJob));
+        s.AddJob(
+            typeof(GpsSync.Delegates.SyncJob),
+            requiredNetwork: Shiny.Jobs.InternetAccess.Any,
+            runInForeground: true
+        );
         s.AddGps<GpsSync.Delegates.MyGpsDelegate>();
         s.AddNotifications();
         s.AddGlobalCommandExceptionHandler(new(
