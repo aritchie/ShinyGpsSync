@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:gpssync="clr-namespace:GpsSync"
+             x:DataType="gpssync:NetworkLogViewModel"
+             x:Class="GpsSync.NetworkLogPage"
+             Title="Network Events">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Clear"
+                     Command="{Binding Clear}" />
+    </ContentPage.ToolbarItems>
+
+    <RefreshView Command="{Binding Load}"
+                 IsRefreshing="{Binding IsBusy}">
+        <CollectionView ItemsSource="{Binding Logs}">
+            <CollectionView.EmptyView>
+                <Label Text="No Network Events Recorded" />
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="gpssync:NetworkEvent">
+                    <VerticalStackLayout>
+                        <Label Text="{Binding Timestamp.LocalDateTime}" />
+                        <BoxView HorizontalOptions="FillAndExpand"
+                                 VerticalOptions="Center"
+                                 HeightRequest="1" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+</ContentPage>

@@ -1,20 +1,22 @@
 ﻿using Shiny.Notifications;
 
-namespace GpsSync;
+namespace GpsSync.Delegates;
 
 
-public class AppStartup : IShinyStartupTask
+public class NetworkMonitorService : IShinyStartupTask
 {
+    readonly MySqliteConnection data;
     readonly Shiny.Net.IConnectivity conn;
     readonly INotificationManager notifications;
     readonly ILogger logger;
     readonly AppSettings settings;
 
 
-    public AppStartup(
+    public NetworkMonitorService(
         Shiny.Net.IConnectivity conn,
         INotificationManager notifications,
-        ILogger<AppStartup> logger,
+        MySqliteConnection data,
+        ILogger<NetworkMonitorService> logger,
         AppSettings settings
     )
     {
@@ -22,9 +24,11 @@ public class AppStartup : IShinyStartupTask
         this.notifications = notifications;
         this.logger = logger;
         this.settings = settings;
+        this.data = data;
     }
 
 
+    // this will keep running as long as GPS is going OR the app is in the foreground
     public void Start()
     {
         // this is not needed WITH the job - but it is a good thought experiment
@@ -38,10 +42,17 @@ public class AppStartup : IShinyStartupTask
                     this.logger.LogInformation("Connected: " + connected);
                     if (settings.IsPunchedIn)
                     {
-                        var title = connected ? "Online" : "Offline";
-
-                        // TODO: send notification and/or record to db
-                        //await this.notifications.Send(title, "GPS Sync has changed state");
+                        await this.data.InsertAsync(new NetworkEvent
+                        {
+                            HasInternet = this.conn.IsInternetAvailable(),
+                            ConnectionTypes = this.conn.ConnectionTypes.ToString(),
+                            Timestamp = DateTimeOffset.UtcNow
+                        });
+                        if (settings.IsNotificationsEnabled)
+                        {
+                            var title = connected ? "Online" : "Offline";
+                            await this.notifications.Send(title, "GPS Sync Network has changed state");
+                        }
                     }   
                 },
                 ex => this.logger.LogError(ex, "Error with online restore")

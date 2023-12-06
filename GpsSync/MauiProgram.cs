@@ -40,15 +40,14 @@ public static class MauiProgram
 #endif
         var s = builder.Services;
         s.AddSingleton<MySqliteConnection>();
-        s.AddShinyService<AppStartup>();
-        s.AddShinyService<AppSettings>();
+        s.AddShinyService<NetworkMonitorService>();
 
         s.AddJob(
-            typeof(GpsSync.Delegates.SyncJob),
+            typeof(MyJob),
             requiredNetwork: Shiny.Jobs.InternetAccess.Any,
             runInForeground: true
         );
-        s.AddGps<GpsSync.Delegates.MyGpsDelegate>();
+        s.AddGps<MyGpsDelegate>();
         s.AddNotifications();
         return builder;
     }
@@ -59,7 +58,9 @@ public static class MauiProgram
         var s = builder.Services;
 
         s.RegisterForNavigation<MainPage, MainViewModel>();
-        s.RegisterForNavigation<LogPage, LogViewModel>();
+        s.RegisterForNavigation<JobLogPage, JobLogViewModel>();
+        s.RegisterForNavigation<NetworkLogPage, NetworkLogViewModel>();
+        s.RegisterForNavigation<GpsLogPage, GpsLogViewModel>();
         return builder;
     }
 }

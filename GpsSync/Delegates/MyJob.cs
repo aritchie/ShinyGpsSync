@@ -9,19 +9,30 @@ namespace GpsSync.Delegates;
 /// If the app goes full to the background (GPS off), this job will run periodically
 /// covering ALL areas of sync
 /// </summary>
-public class SyncJob : Job
+public class MyJob : Job
 {
     readonly MySqliteConnection conn;
+    readonly AppSettings settings;
 
-    public SyncJob(ILogger<SyncJob> logger, MySqliteConnection conn) : base(logger)
+    public MyJob(
+        ILogger<MyJob> logger,
+        AppSettings settings,
+        MySqliteConnection conn
+    ) : base(logger)
     {
         this.MinimumTime = TimeSpan.FromMinutes(10);
+        this.settings = settings;
         this.conn = conn;
     }
 
 
     protected override Task Run(CancellationToken cancelToken)
     {
-        return this.conn.InsertAsync(new JobRun { Timestamp = DateTimeOffset.UtcNow });
+        // TODO: record if clocked in?
+        return this.conn.InsertAsync(new JobRun
+        {
+            Timestamp = DateTimeOffset.UtcNow,
+            IsPunchedIn = this.settings.IsPunchedIn
+        });
     }
 }

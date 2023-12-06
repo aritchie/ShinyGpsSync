@@ -13,6 +13,11 @@ public class MainViewModel : ViewModel
     ) : base(services)
     {
         this.IsPunchedIn = settings.IsPunchedIn;
+        this.IsNotificationsEnabled = settings.IsNotificationsEnabled;
+
+        this.WhenAnyValue(x => x.IsNotificationsEnabled)
+            .Skip(1)
+            .Subscribe(x => settings.IsNotificationsEnabled = x);
 
         this.PunchIn = ReactiveCommand.CreateFromTask(
             async () =>
@@ -31,6 +36,7 @@ public class MainViewModel : ViewModel
                     return;
                 }
 
+                await gpsManager.StopListener();
                 await gpsManager.StartListener(GpsRequest.Realtime(true));
                 settings.IsPunchedIn = true; // I could just use gps flag?
                 this.IsPunchedIn = true;
@@ -55,7 +61,9 @@ public class MainViewModel : ViewModel
     }
 
 
+
     [Reactive] public bool IsPunchedIn { get; set; }
+    [Reactive] public bool IsNotificationsEnabled { get; set; }
     public ICommand PunchIn { get; }
     public ICommand PunchOut { get; }
 }

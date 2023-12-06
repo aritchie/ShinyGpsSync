@@ -7,14 +7,28 @@
              Title="GPS Sync">
 
     <VerticalStackLayout>
-        <Button Text="Check Job Runs"
+
+        <Button Text="Job Run Logs"
                 Command="{Binding Navigate}"
-                CommandParameter="LogPage" />
+                CommandParameter="JobLogPage" />
+
+        <Button Text="GPS Pings"
+                Command="{Binding Navigate}"
+                CommandParameter="GpsLogPage" />
+
+        <Button Text="Network Logs"
+                Command="{Binding Navigate}"
+                CommandParameter="NetworkLogPage" />
 
         <Button Text="Punch-In"
                 Command="{Binding PunchIn}" />
 
         <Button Text="Punch-Out"
                 Command="{Binding PunchOut}"/>
+
+        <HorizontalStackLayout>
+            <CheckBox IsChecked="{Binding IsNotificationsEnabled}" />
+            <Label Text="Enable Notifications on Network Changes" />
+        </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>
