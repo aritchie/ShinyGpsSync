@@ -7,6 +7,10 @@
              Title="GPS Sync">
 
     <VerticalStackLayout>
+        <Button Text="Check Job Runs"
+                Command="{Binding Navigate}"
+                CommandParameter="LogPage" />
+
         <Button Text="Punch-In"
                 Command="{Binding PunchIn}" />
 

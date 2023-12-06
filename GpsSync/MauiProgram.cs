@@ -1,4 +1,4 @@
-﻿using Prism.DryIoc;
+﻿using GpsSync.Delegates;
 
 namespace GpsSync;
 
@@ -11,7 +11,14 @@ public static class MauiProgram
         .UseMauiCommunityToolkit()
         .UseShinyFramework(
             new DryIocContainerExtension(),
-            prism => prism.OnAppStart("NavigationPage/MainPage")
+            prism => prism.OnAppStart("NavigationPage/MainPage"),
+            new(
+                #if DEBUG
+                ErrorAlertType.FullError
+                #else
+                ErrorAlertType.NoLocalize
+                #endif
+            )
         )
         .ConfigureFonts(fonts =>
         {
@@ -19,16 +26,8 @@ public static class MauiProgram
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
         })
         .RegisterInfrastructure()
-        .RegisterAppServices()
         .RegisterViews()
         .Build();
-
-
-    static MauiAppBuilder RegisterAppServices(this MauiAppBuilder builder) 
-    {
-        // register your own services here!
-        return builder;
-    }
 
 
     static MauiAppBuilder RegisterInfrastructure(this MauiAppBuilder builder)
@@ -40,6 +39,7 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
         var s = builder.Services;
+        s.AddSingleton<MySqliteConnection>();
         s.AddShinyService<AppStartup>();
         s.AddShinyService<AppSettings>();
 
@@ -50,13 +50,6 @@ public static class MauiProgram
         );
         s.AddGps<GpsSync.Delegates.MyGpsDelegate>();
         s.AddNotifications();
-        s.AddGlobalCommandExceptionHandler(new(
-#if DEBUG
-            ErrorAlertType.FullError
-#else
-            ErrorAlertType.NoLocalize
-#endif
-        ));
         return builder;
     }
 
@@ -66,6 +59,7 @@ public static class MauiProgram
         var s = builder.Services;
 
         s.RegisterForNavigation<MainPage, MainViewModel>();
+        s.RegisterForNavigation<LogPage, LogViewModel>();
         return builder;
     }
 }

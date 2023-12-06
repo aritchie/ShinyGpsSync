@@ -11,11 +11,17 @@ namespace GpsSync.Delegates;
 /// </summary>
 public class SyncJob : Job
 {
-    public SyncJob(ILogger<SyncJob> logger) : base(logger) {}
+    readonly MySqliteConnection conn;
 
-
-    protected override async Task Run(CancellationToken cancelToken)
+    public SyncJob(ILogger<SyncJob> logger, MySqliteConnection conn) : base(logger)
     {
-        // TODO: send data here
+        this.MinimumTime = TimeSpan.FromMinutes(10);
+        this.conn = conn;
+    }
+
+
+    protected override Task Run(CancellationToken cancelToken)
+    {
+        return this.conn.InsertAsync(new JobRun { Timestamp = DateTimeOffset.UtcNow });
     }
 }

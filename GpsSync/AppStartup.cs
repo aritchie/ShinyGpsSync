@@ -39,7 +39,9 @@ public class AppStartup : IShinyStartupTask
                     if (settings.IsPunchedIn)
                     {
                         var title = connected ? "Online" : "Offline";
-                        await this.notifications.Send(title, "GPS Sync has changed state");
+
+                        // TODO: send notification and/or record to db
+                        //await this.notifications.Send(title, "GPS Sync has changed state");
                     }   
                 },
                 ex => this.logger.LogError(ex, "Error with online restore")
