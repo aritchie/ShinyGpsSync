@@ -41,6 +41,7 @@ public static class MauiProgram
         var s = builder.Services;
         s.AddSingleton<MySqliteConnection>();
         s.AddShinyService<NetworkMonitorService>();
+        s.AddShinyService<AppSettings>();
 
         s.AddJob(
             typeof(MyJob),
