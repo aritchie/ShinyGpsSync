@@ -28,7 +28,7 @@ public class MainViewModel : ViewModel
                     await this.Dialogs.Alert("Insufficient GPS Permissions - " + access);
                     return;
                 }
-                
+
                 access = await notifications.RequestAccess();
                 if (access != AccessState.Available)
                 {
